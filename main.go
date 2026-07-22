@@ -15,12 +15,14 @@ func main() {
 	}
 
 	switch os.Args[1] {
-	case "-h", "--help":
+	case "h", "help":
 		help.ShowHelp()
-	case "-v", "--version":
+	case "v", "version":
 		fmt.Println("omake v0.1.0")
-	case "-cfg", "--config":
-		config.ShowConfig()
+	case "cfg", "config":
+		config.GetConfigPath()
+	case "init", "setup":
+		config.SetupConfig()
 	default:
 		fmt.Println("unknown command:", os.Args[1])
 	}
