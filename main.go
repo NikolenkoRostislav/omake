@@ -4,26 +4,39 @@ import (
 	"fmt"
 	"os"
 
-	"github.com/rostislav/omake/commands/config"
-	"github.com/rostislav/omake/commands/help"
+	"github.com/rostislav/omake/internal/config"
+	"github.com/rostislav/omake/internal/help"
+	"github.com/rostislav/omake/internal/omake"
 )
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("omake: missing command, use -h or --help for usage information")
+		fmt.Println("Missing command, use 'omake help' for usage information")
 		return
 	}
 
 	switch os.Args[1] {
-	case "h", "help":
+	case "help":
 		help.ShowHelp()
-	case "v", "version":
+	case "version":
 		fmt.Println("omake v0.1.0")
-	case "cfg", "config":
-		config.GetConfigPath()
-	case "init", "setup":
-		config.SetupConfig()
+	case "config":
+		if len(os.Args) < 3 {
+			fmt.Println("config command requires an additional argument, use 'omake help' for usage information")
+			return
+		}
+
+		switch os.Args[2] {
+		case "path":
+			config.GetConfigPath()
+		case "setup":
+			config.SetupConfig()
+
+		default:
+			fmt.Println("Unknown config command, use 'omake help' for usage information")
+		}
+
 	default:
-		fmt.Println("unknown command:", os.Args[1])
+		omake.Make(os.Args[1])
 	}
 }

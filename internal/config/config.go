@@ -7,28 +7,52 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/rostislav/omake/state"
+	"github.com/rostislav/omake/internal/state"
 )
 
 func GetConfigPath() {
-	state, err := state.Load()
+	path, err := getConfigPath()
 	if err != nil {
-		fmt.Println("Error loading state:", err)
-		return
-	}
-
-	path := state.ConfigPath
-	if path == "" {
-		fmt.Println("Configuration file path not set")
+		fmt.Println("Error:", err)
 		return
 	}
 
 	fmt.Println("Configuration file path:", path)
 }
 
+func GetMakefilePath() (string, error) {
+	configPath, err := getConfigPath()
+	if err != nil {
+		return "", err
+	}
+
+	makefilePath := filepath.Join(configPath, "Makefile")
+	if _, err := os.Stat(makefilePath); errors.Is(err, os.ErrNotExist) {
+		fmt.Println("Makefile does not exist in the configuration directory")
+		return "", errors.New("Makefile does not exist in the configuration directory")
+	}
+
+	return makefilePath, nil
+}
+
+func GetYamlConfigPath() (string, error) {
+	configPath, err := getConfigPath()
+	if err != nil {
+		return "", err
+	}
+
+	makefilePath := filepath.Join(configPath, "config.yaml")
+	if _, err := os.Stat(makefilePath); errors.Is(err, os.ErrNotExist) {
+		fmt.Println("config.yaml does not exist in the configuration directory")
+		return "", errors.New("config.yaml does not exist in the configuration directory")
+	}
+
+	return makefilePath, nil
+}
+
 func SetupConfig() {
 	var path string
-	if len(os.Args) < 3 {
+	if len(os.Args) < 4 {
 		fmt.Println("Custom config path not provided, using default config path")
 		path = expandHome("~\\omake")
 		if err := os.MkdirAll(path, 0755); err != nil {
@@ -36,7 +60,7 @@ func SetupConfig() {
 			return
 		}
 	} else {
-		path = os.Args[2]
+		path = os.Args[3]
 		path = findDir(path)
 		if path == "" {
 			return
@@ -61,6 +85,20 @@ func SetupConfig() {
 	}
 
 	fmt.Println("Configuration file path:", path)
+}
+
+func getConfigPath() (string, error) {
+	state, err := state.Load()
+	if err != nil {
+		return "", errors.New("Error loading state")
+	}
+
+	path := state.ConfigPath
+	if path == "" {
+		return "", errors.New("Configuration file path not set")
+	}
+
+	return path, nil
 }
 
 func findDir(path string) string {
