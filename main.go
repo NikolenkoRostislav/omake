@@ -7,6 +7,7 @@ import (
 	"github.com/rostislav/omake/internal/config"
 	"github.com/rostislav/omake/internal/describe"
 	"github.com/rostislav/omake/internal/help"
+	"github.com/rostislav/omake/internal/list"
 	"github.com/rostislav/omake/internal/omake"
 )
 
@@ -43,6 +44,8 @@ func main() {
 		}
 
 		describe.ShowDescription(os.Args[2])
+	case "list":
+		list.ShowList()
 
 	default:
 		omake.Make(os.Args[1])
