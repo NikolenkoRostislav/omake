@@ -5,6 +5,7 @@ import (
 	"os"
 
 	"github.com/rostislav/omake/internal/config"
+	"github.com/rostislav/omake/internal/describe"
 	"github.com/rostislav/omake/internal/help"
 	"github.com/rostislav/omake/internal/omake"
 )
@@ -35,6 +36,13 @@ func main() {
 		default:
 			fmt.Println("Unknown config command, use 'omake help' for usage information")
 		}
+	case "describe":
+		if len(os.Args) < 3 {
+			fmt.Println("describe command requires an additional argument, use 'omake help' for usage information")
+			return
+		}
+
+		describe.ShowDescription(os.Args[2])
 
 	default:
 		omake.Make(os.Args[1])
