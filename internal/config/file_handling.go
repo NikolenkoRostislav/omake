@@ -37,21 +37,7 @@ func GetYamlConfigPath() (string, error) {
 	return makefilePath, nil
 }
 
-func getConfigPath() (string, error) {
-	state, err := state.Load()
-	if err != nil {
-		return "", errors.New("Error loading state")
-	}
-
-	path := state.ConfigPath
-	if path == "" {
-		return "", errors.New("Configuration file path not set")
-	}
-
-	return path, nil
-}
-
-func findDir(path string) (string, error) {
+func FindDir(path string) (string, error) {
 	path = filepath.Clean(path)
 	path = expandHome(path)
 
@@ -66,6 +52,20 @@ func findDir(path string) (string, error) {
 	}
 	if !info.IsDir() {
 		return "", errors.New("path is a file, not a directory")
+	}
+
+	return path, nil
+}
+
+func getConfigPath() (string, error) {
+	state, err := state.Load()
+	if err != nil {
+		return "", errors.New("Error loading state")
+	}
+
+	path := state.ConfigPath
+	if path == "" {
+		return "", errors.New("Configuration file path not set")
 	}
 
 	return path, nil

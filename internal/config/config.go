@@ -1,6 +1,7 @@
 package config
 
 import (
+	"errors"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -39,4 +40,20 @@ func GetConfig() (*Config, error) {
 	}
 
 	return &cfg, nil
+}
+
+var ErrTargetNotFound = errors.New("target not found")
+
+func GetConfigForTarget(targetName string) (*Target, error) {
+	cfg, err := GetConfig()
+	if err != nil {
+		return nil, err
+	}
+
+	target, ok := cfg.Targets[targetName]
+	if !ok {
+		return nil, ErrTargetNotFound
+	}
+
+	return &target, nil
 }

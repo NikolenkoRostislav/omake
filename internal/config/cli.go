@@ -30,7 +30,7 @@ func SetupConfig() {
 		}
 	} else {
 		path = os.Args[3]
-		path, err = findDir(path)
+		path, err = FindDir(path)
 		if err != nil {
 			fmt.Println("Error finding directory:", err)
 			return
