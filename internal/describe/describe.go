@@ -27,9 +27,6 @@ func ShowDescription(target string) {
 		fmt.Println("\nVariables:")
 		for name, variable := range targetConfig.Variables {
 			varDescription := variable.Description
-			if varDescription == "" {
-				varDescription = "No description available."
-			}
 			fmt.Printf("  %s: %s\n", name, varDescription)
 
 			varEnv := variable.EnvVar
