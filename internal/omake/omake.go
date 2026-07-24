@@ -15,12 +15,30 @@ func Make(command string) {
 		return
 	}
 
-	executionDir, err := chooseExecutionDirectory()
+	config, err := config.GetConfig()
+	if err != nil {
+		fmt.Println("Error getting configuration:", err)
+		return
+	}
+
+	executionDir, err := chooseExecutionDirectory(config)
 	if err != nil {
 		fmt.Println("Error choosing execution directory:", err)
 		return
 	}
 
+	execMakeCommand(command, executionDir, makefilePath)
+}
+
+func chooseExecutionDirectory(config *config.Config) (string, error) {
+	cwd, err := os.Getwd()
+	if err != nil {
+		return "", err
+	}
+	return cwd, nil
+}
+
+func execMakeCommand(command string, executionDir string, makefilePath string) {
 	cmd := exec.Command("make", "-f", makefilePath, "-C", executionDir, command)
 
 	cmd.Stdout = os.Stdout
@@ -30,12 +48,4 @@ func Make(command string) {
 	if err := cmd.Run(); err != nil {
 		panic(err)
 	}
-}
-
-func chooseExecutionDirectory() (string, error) {
-	cwd, err := os.Getwd()
-	if err != nil {
-		return "", err
-	}
-	return cwd, nil
 }

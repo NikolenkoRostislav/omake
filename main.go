@@ -28,7 +28,7 @@ func main() {
 
 		switch os.Args[2] {
 		case "path":
-			config.GetConfigPath()
+			config.ShowConfigPath()
 		case "setup":
 			config.SetupConfig()
 
