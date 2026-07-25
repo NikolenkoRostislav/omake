@@ -1,0 +1,46 @@
+targets:
+  glog:
+    description: "logs all git commits"
+
+  gsave:
+    execution_dir: "."
+    variables:
+      m:
+        env_var: "MESSAGE"
+
+  gsave-new:
+    description: "commit changes and push a new branch"
+    execution_dir: "."
+    variables:
+      m:
+        description: "Commit message"
+        env_var: "MESSAGE"
+      b:
+        description: "Name of the new branch"
+        env_var: "NEW_BRANCH"
+
+  gnew-branch:
+    description: "create a new branch from an existing branch"
+    execution_dir: "."
+    variables:
+      source:
+        description: "Name of the source branch"
+        env_var: "SOURCE_BRANCH"
+        default: "main"
+      new:
+        description: "Name of the new branch"
+        env_var: "NEW_BRANCH"
+
+  extract-audio:
+    execution_dir: "~/Videos"
+    variables:
+      video:
+        description: "Name to the video file"
+        env_var: "VIDEO"
+      audio:
+        description: "Name of the output mp3 file"
+        env_var: "AUDIO"
+        default: output
+
+  drestart:
+    execution_dir: "."
