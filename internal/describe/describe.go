@@ -25,9 +25,9 @@ func ShowDescription(target string) {
 
 	if len(targetConfig.Variables) > 0 {
 		fmt.Println("\nVariables:")
-		for name, variable := range targetConfig.Variables {
+		for _, variable := range targetConfig.Variables {
 			varDescription := variable.Description
-			fmt.Printf("  %s: %s\n", name, varDescription)
+			fmt.Printf("  %s: %s\n", variable.Name, varDescription)
 
 			varEnv := variable.EnvVar
 			if varEnv != "" {

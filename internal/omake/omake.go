@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"os"
 	"os/exec"
+	"strconv"
+	"strings"
 
 	"github.com/rostislav/omake/internal/config"
 )
@@ -54,46 +56,82 @@ func chooseExecutionDirectory(targetConfig *config.Target) (string, error) {
 }
 
 func getVariables(targetConfig *config.Target) (map[string]string, error) {
-	variables := make(map[string]string)
-
 	if targetConfig == nil || len(targetConfig.Variables) == 0 {
-		return variables, nil
+		return nil, nil
 	}
 
-	for name, variable := range targetConfig.Variables {
+	if err := validateVariablesConfig(targetConfig.Variables); err != nil {
+		return nil, err
+	}
+
+	args := os.Args[2:]
+	providedVariables, err := getProvidedVariables(args)
+	if err != nil {
+		return nil, err
+	}
+
+	return getVariablesFromProvided(targetConfig.Variables, providedVariables)
+}
+
+func validateVariablesConfig(variables []config.Variable) error {
+	seenWithDefault := false
+	for _, variable := range variables {
+		if variable.Name == "" {
+			return errors.New("Variable name not specified")
+		}
 		if variable.EnvVar == "" {
-			fmt.Printf("Warning: No environment variable specified for variable '%s'. The value will be ignored.\n", name)
+			return fmt.Errorf("Environment variable not specified for variable %s", variable.Name)
+		}
+		if variable.Default == "" && seenWithDefault {
+			return errors.New("Variables with default not allowed before variables without default")
+		}
+		if variable.Default != "" {
+			seenWithDefault = true
+		}
+	}
+	return nil
+}
+
+func getProvidedVariables(args []string) (map[string]string, error) {
+	providedVariables := make(map[string]string)
+	seenNamed := false
+	for i, variable := range args {
+		if strings.Contains(variable, "=") {
+			seenNamed = true
+			parts := strings.SplitN(variable, "=", 2)
+			if len(parts) != 2 {
+				return nil, fmt.Errorf("Invalid variable format: %s", variable)
+			}
+			providedVariables[parts[0]] = parts[1]
 			continue
 		}
 
-		value, found := findArgumentValue(name)
-		if !found {
-			if variable.Default == "" {
-				return nil, fmt.Errorf("required variable '%s' is not set", name)
-			}
-
-			value = variable.Default
+		if !seenNamed {
+			providedVariables[strconv.Itoa(i)] = variable
+		} else {
+			return nil, errors.New("Positional variables can't be provided after keyword variables")
 		}
+	}
 
-		variables[variable.EnvVar] = value
+	return providedVariables, nil
+}
+
+func getVariablesFromProvided(neededVars []config.Variable, providedVars map[string]string) (map[string]string, error) {
+	variables := make(map[string]string)
+
+	for i, variable := range neededVars {
+		if value, ok := providedVars[variable.Name]; ok {
+			variables[variable.EnvVar] = value
+		} else if value, ok := providedVars[strconv.Itoa(i)]; ok {
+			variables[variable.EnvVar] = value
+		} else if variable.Default != "" {
+			variables[variable.EnvVar] = variable.Default
+		} else {
+			return nil, fmt.Errorf("Required variable '%s' is not set", variable.Name)
+		}
 	}
 
 	return variables, nil
-}
-
-func findArgumentValue(name string) (string, bool) {
-	for i, arg := range os.Args {
-		if arg == name {
-			if i+1 >= len(os.Args) {
-				fmt.Printf("Error: variable '%s' was provided without a value\n", name)
-				return "", false
-			}
-
-			return os.Args[i+1], true
-		}
-	}
-
-	return "", false
 }
 
 func execMakeCommand(target string, executionDir string, makefilePath string, variables map[string]string) {

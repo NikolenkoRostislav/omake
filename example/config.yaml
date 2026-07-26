@@ -5,17 +5,17 @@ targets:
   gsave:
     execution_dir: "."
     variables:
-      m:
+      - name: m
         env_var: "MESSAGE"
 
   gsave-new:
     description: "commit changes and push a new branch"
     execution_dir: "."
     variables:
-      m:
+      - name: m
         description: "Commit message"
         env_var: "MESSAGE"
-      b:
+      - name: b
         description: "Name of the new branch"
         env_var: "NEW_BRANCH"
 
@@ -23,21 +23,21 @@ targets:
     description: "create a new branch from an existing branch"
     execution_dir: "."
     variables:
-      source:
+      - name: new
+        description: "Name of the new branch"
+        env_var: "NEW_BRANCH"
+      - name: source
         description: "Name of the source branch"
         env_var: "SOURCE_BRANCH"
         default: "main"
-      new:
-        description: "Name of the new branch"
-        env_var: "NEW_BRANCH"
 
   extract-audio:
     execution_dir: "~/Videos"
     variables:
-      video:
+      - name: video
         description: "Name to the video file"
         env_var: "VIDEO"
-      audio:
+      - name: audio
         description: "Name of the output mp3 file"
         env_var: "AUDIO"
         default: output
