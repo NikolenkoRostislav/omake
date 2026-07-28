@@ -24,13 +24,13 @@ Omake handles the Makefile path, execution directory, variables, and provides ex
 
 ## How to use Omake
 
-Use ```omake setup config``` to initialize the omake config inside your home folder. 
+Use ```omake init``` to initialize the omake config inside your home folder. 
 
-You can choose the config location using ```omake setup config <config directory>```. 
+You can choose the config location using ```omake init <config directory>```. 
 
 A folder will be created with a ```config.yaml``` and a ```Makefile```. 
 
-Please use ```omake setup config <config directory>``` if you want to change the config's location.
+Please use ```omake init <config directory>``` if you want to change the config's location.
 
 An example [config.yaml](./example/config.yaml) and [Makefile](./example/Makefile) are provided. Let's go over the configuration options:
 
@@ -62,10 +62,10 @@ Every Makefile target that you want to use with omake must be listed under targe
 
 ```yaml
   glog:
-    description: "logs all git commits"
+    desc: "logs all git commits"
 ```
 
-The description will be displayed when running ```omake describe <target>``` 
+The description will be displayed when running ```omake desc <target>``` 
 
 This field is optional.
 
@@ -73,7 +73,7 @@ This field is optional.
 
 ```yaml
   gsave:
-    execution_dir: "."
+    exec_dir: "."
 ```
 The directory where the Make target will be executed.
 
@@ -87,9 +87,9 @@ You can use:
 
 ```yaml
   gnew-branch:
-    variables:
+    vars:
       - name: new
-        description: "Name of the new branch"
+        desc: "Name of the new branch"
         env_var: "NEW_BRANCH"
       - name: source
         env_var: "SOURCE_BRANCH"
@@ -102,7 +102,7 @@ Each variable requires:
 - env_var - the environment variable passed to Make
 
 Optional fields:
-- description - shown in omake describe <target>
+- desc - shown in omake describe <target>
 - default - value used when no value is provided
 
 Variable rules
@@ -138,7 +138,7 @@ make
 ```
 from the project directory to build the binary.
 
-The compiled executable will be available at `./bin/omake.exe`.
+The compiled executable will be available at `./bin/omake.exe` on Windows or `./bin/omake` on Linux.
 
 ## Notes
 

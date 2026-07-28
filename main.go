@@ -13,7 +13,7 @@ import (
 
 func main() {
 	if len(os.Args) < 2 {
-		fmt.Println("Missing command, use 'omake help' for usage information")
+		help.ShowHelp()
 		return
 	}
 
@@ -22,27 +22,19 @@ func main() {
 		help.ShowHelp()
 	case "version":
 		fmt.Println("omake v0.1.0")
-	case "config":
+	case "cfg-path":
+		config.ShowConfigPath()
+	case "init":
 		if len(os.Args) < 3 {
-			fmt.Println("config command requires an additional argument, use 'omake help' for usage information")
+			config.SetupConfig("")
+		} else {
+			config.SetupConfig(os.Args[2])
+		}
+	case "desc":
+		if len(os.Args) < 3 {
+			fmt.Println("desc command requires an additional argument, use 'omake help' for usage information")
 			return
 		}
-
-		switch os.Args[2] {
-		case "path":
-			config.ShowConfigPath()
-		case "setup":
-			config.SetupConfig()
-
-		default:
-			fmt.Println("Unknown config command, use 'omake help' for usage information")
-		}
-	case "describe":
-		if len(os.Args) < 3 {
-			fmt.Println("describe command requires an additional argument, use 'omake help' for usage information")
-			return
-		}
-
 		describe.ShowDescription(os.Args[2])
 	case "list":
 		list.ShowList()

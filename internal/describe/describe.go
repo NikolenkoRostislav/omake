@@ -23,6 +23,12 @@ func ShowDescription(target string) {
 		fmt.Println(targetConfig.Description)
 	}
 
+	if targetConfig.ExecutionDir != "" {
+		fmt.Printf("\nExecution directory: %s\n", targetConfig.ExecutionDir)
+	} else {
+		fmt.Println("\nExecution directory: .")
+	}
+
 	if len(targetConfig.Variables) > 0 {
 		fmt.Println("\nVariables:")
 		for _, variable := range targetConfig.Variables {

@@ -12,14 +12,14 @@ type Config struct {
 }
 
 type Target struct {
-	ExecutionDir string     `yaml:"execution_dir"`
-	Description  string     `yaml:"description"`
-	Variables    []Variable `yaml:"variables"`
+	ExecutionDir string     `yaml:"exec_dir"`
+	Description  string     `yaml:"desc"`
+	Variables    []Variable `yaml:"vars"`
 }
 
 type Variable struct {
 	Name        string `yaml:"name"`
-	Description string `yaml:"description"`
+	Description string `yaml:"desc"`
 	EnvVar      string `yaml:"env_var"`
 	Default     string `yaml:"default"`
 }

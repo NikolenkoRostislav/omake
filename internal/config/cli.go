@@ -17,11 +17,11 @@ func ShowConfigPath() {
 	fmt.Println("Configuration file path:", path)
 }
 
-func SetupConfig() {
+func SetupConfig(customPath string) {
 	var path string
 	var err error
 
-	if len(os.Args) < 4 {
+	if customPath == "" {
 		fmt.Println("Custom config path not provided, using default config path")
 		path = expandHome("~\\omake")
 		if err := os.MkdirAll(path, 0755); err != nil {
@@ -29,8 +29,7 @@ func SetupConfig() {
 			return
 		}
 	} else {
-		path = os.Args[3]
-		path, err = FindDir(path)
+		path, err = FindDir(customPath)
 		if err != nil {
 			fmt.Println("Error finding directory:", err)
 			return
